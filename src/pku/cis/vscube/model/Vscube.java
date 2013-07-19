@@ -31,7 +31,7 @@ public class Vscube{
 	public void updateMvg(){
 		int i;
 		for(i=0; i<DimNum; i++){
-			mvg.get(i).updateDim();
+			mvg.get(i).updateDim(exprieTime);
 		}
 	}
 }
