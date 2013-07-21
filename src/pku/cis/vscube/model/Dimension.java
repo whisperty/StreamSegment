@@ -63,4 +63,8 @@ public class Dimension {
 		
 		nodeList.add(new Node(a));
 	}
+	
+	public void updateDim(int expireTime){
+		
+	}
 }
