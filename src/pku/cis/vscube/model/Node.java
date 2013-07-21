@@ -98,4 +98,9 @@ public class Node {
 		
 		return flag;
 	}
+	
+	//added by ty 20130721
+	public int getKind(){
+		return kind;
+	}
 }

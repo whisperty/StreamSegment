@@ -1,4 +1,7 @@
 <VSSEQ>
 	<bv dimIndex="T" variName="hightest" variType="1">
-	<bv dimIndex="T" variName="hightest" variType="-1">
+		<bv dimIndex="U" variType="1"/>
+	</bv>
+
+	<bv dimIndex="T" variName="hightest" variType="-1"/>
 </VSSEQ>

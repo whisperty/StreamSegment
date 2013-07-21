@@ -2,11 +2,13 @@ package pku.cis.vscube.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import pku.cis.vscube.query.BasicVariation;
+
 
 public class Dimension {
 	static final double sameEps = 1e-8;
 	static final double trendEps = 1e-8;
-	List<Node>nodeList = new LinkedList();
+	List<Node> nodeList = new LinkedList();
 	
 	public void addNode(Data a){
 		if(nodeList.isEmpty()){
@@ -66,5 +68,25 @@ public class Dimension {
 	
 	public void updateDim(int expireTime){
 		
+	}
+	
+	public LinkedList<BasicVariation> getBv(BasicVariation bv){
+		int i;
+		LinkedList<BasicVariation> bvColl = new LinkedList<BasicVariation>();
+		for(i=0; i<nodeList.size(); i++){
+			Node node = nodeList.get(i);
+			if(IsSameVari(node, bv, i)){
+				BasicVariation bvResult = new BasicVariation(bv);
+				bvResult.setTime(node.getMinTimestamp(), node.getMaxTimestamp());
+				bvColl.add(bvResult);
+			}
+		}
+		return bvColl;
+	}
+	
+	public Boolean IsSameVari(Node node, BasicVariation bv, int i){
+		
+		//need edit
+		return true;
 	}
 }
