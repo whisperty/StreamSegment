@@ -68,7 +68,7 @@ public class Dimension {
 	
 	public void updateDim(int expireTime){
 		while(nodeList.size() > 0){
-			int num = nodeList.get(0).del(exprieTime);
+			int num = nodeList.get(0).del(expireTime);
 			if(nodeList.get(0).isEmpty())
 				nodeList.remove(0);
 			
