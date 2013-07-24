@@ -103,4 +103,22 @@ public class Node {
 	public int getKind(){
 		return kind;
 	}
+	
+	public int del(int exprieTime){
+		int num = 0;
+		
+		while(dataList.size() > 0){
+			if(dataList.get(0).timeSpan >= exprieTime){
+				dataList.remove(0);
+				num++;
+			}
+				else
+				break;
+		}
+		
+		if(dataList.size() == 1)
+			kind = 0;
+		
+		return num;
+	}	
 }

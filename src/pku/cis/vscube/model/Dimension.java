@@ -67,7 +67,14 @@ public class Dimension {
 	}
 	
 	public void updateDim(int expireTime){
-		
+		while(nodeList.size() > 0){
+			int num = nodeList.get(0).del(exprieTime);
+			if(nodeList.get(0).isEmpty())
+				nodeList.remove(0);
+			
+			if(num <= 0)
+				break;
+		}		
 	}
 	
 	public LinkedList<BasicVariation> getBv(BasicVariation bv){
