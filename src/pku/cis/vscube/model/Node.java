@@ -2,6 +2,8 @@ package pku.cis.vscube.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import pku.cis.vscube.query.BasicVariation;
+
 
 public class Node {
 	int kind;// 0 - basic node, 1 - Same, 2 - Trend
@@ -71,6 +73,10 @@ public class Node {
 		return dataList.get(0).getTimestamp();
 	}
 	
+	public Data getFirstData(){
+		return dataList.get(0);
+	}
+	
 	public Data getLastData(){
 		return dataList.get(dataList.size() - 1);
 	}
@@ -120,5 +126,25 @@ public class Node {
 			kind = 0;
 		
 		return num;
+	}
+
+	public void getBv(LinkedList<BasicVariation> bvColl, BasicVariation bv, double eps) {
+		int size = dataList.size();
+		Data pre = new Data();
+		for(int i = 0; i < size; i++){
+			Data now = dataList.get(i);
+			if(i > 0 && isSameVari(pre, now, bv, eps)){
+				BasicVariation bvResult = new BasicVariation(bv);
+				bvResult.setTime(pre.getTimestamp(), now.getTimestamp());
+				bvColl.add(bvResult);				
+			}
+			
+			pre = now;
+		}
+	}
+
+	public boolean isSameVari(Data a, Data b, BasicVariation bv, double eps) {
+		double ta = a.get(bv.getVariName()), tb = b.get(bv.getVariName());
+		return bv.isSameVari(sgn(tb - ta, eps));
 	}	
 }

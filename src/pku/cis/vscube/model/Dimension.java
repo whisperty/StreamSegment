@@ -80,20 +80,50 @@ public class Dimension {
 	public LinkedList<BasicVariation> getBv(BasicVariation bv){
 		int i;
 		LinkedList<BasicVariation> bvColl = new LinkedList<BasicVariation>();
+		Node pre = new Node();
 		for(i=0; i<nodeList.size(); i++){
 			Node node = nodeList.get(i);
-			if(IsSameVari(node, bv, i)){
+			int tmp = IsSameVari(node, bv);
+			
+			if(i > 0){
+				Data a = pre.getLastData(), b = node.getFirstData();
+				if(node.isSameVari(a, b, bv, trendEps)){
+					BasicVariation bvResult = new BasicVariation(bv);
+					bvResult.setTime(node.getMinTimestamp(), node.getMaxTimestamp());
+					bvColl.add(bvResult);					
+				}
+			}
+			
+			if(tmp == 1){
 				BasicVariation bvResult = new BasicVariation(bv);
 				bvResult.setTime(node.getMinTimestamp(), node.getMaxTimestamp());
 				bvColl.add(bvResult);
 			}
+			else
+			if(tmp == 0){
+				node.getBv(bvColl, bv, trendEps);
+			}
+			
+			pre = node;
 		}
 		return bvColl;
 	}
 	
-	public Boolean IsSameVari(Node node, BasicVariation bv, int i){
-		
+	public int IsSameVari(Node node, BasicVariation bv){
 		//need edit
-		return true;
+		if(node.isTrend()){
+			Trend trend = (Trend)node;
+			if(bv.isSameVari(trend.trend(trendEps)))
+				return 1;
+			return -1;
+		}
+		else
+			if(node.isSame()){
+				if(bv.isSameVari(0))
+					return 1;
+				return -1;
+			}
+		
+		return 0;
 	}
 }

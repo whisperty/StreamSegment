@@ -23,4 +23,19 @@ public class Data {
 		return timestamp;
 	}
 
+	double get(String s){
+		if(s == "highest")
+			return highest;
+
+		if(s == "lowest")
+			return lowest;
+		
+		if(s == "timeSpan")
+			return timeSpan;
+		
+		if(s == "displacement")
+			return displacement;
+		
+		return -100000000;
+	}
 }
