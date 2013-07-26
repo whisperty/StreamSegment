@@ -16,6 +16,7 @@ public class RealTimeChart extends ChartPanel implements Runnable
     private static TimeSeries baseline;
     private static TimeSeries upBound;
     private static TimeSeries downBound;
+    private static TimeSeries sourceStream;
     private long value=0;  
     
     //ty
@@ -41,6 +42,7 @@ public class RealTimeChart extends ChartPanel implements Runnable
         baseline = new TimeSeries("basline", Millisecond.class);
         upBound = new TimeSeries("upBound", Millisecond.class);
         downBound = new TimeSeries("downBound", Millisecond.class);
+        sourceStream = new TimeSeries("sourceStream", Millisecond.class);
         TimeSeriesCollection timeseriescollection = new TimeSeriesCollection();
         timeseriescollection.addSeries(timeSeries);
         timeseriescollection.addSeries(baseline);
@@ -71,12 +73,30 @@ public class RealTimeChart extends ChartPanel implements Runnable
             baseline.add(new Millisecond(), 0.94);
             upBound.add(new Millisecond(), 0.96);
             downBound.add(new Millisecond(), 0.92);
+            sourceStream.add(new Millisecond(), getSource());
             Thread.sleep(200*sleeptime);  
             //Thread.sleep(200);
         }  
         catch (InterruptedException e)  {   }  
         }         
     }  
+    
+    private float getSource()
+    {
+    	float num;
+    	if(d.endStream)
+    		return 0;
+    	if(d.sourceStream.isEmpty()){
+    			try {
+					d.readToBuffer();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    	}
+    	num = d.sourceStream.poll();
+    	return num;
+    }
       
     private float randomNum()  
     {     
@@ -86,12 +106,7 @@ public class RealTimeChart extends ChartPanel implements Runnable
     	if(d.endStream)
     		return 0;
     	if(d.datapoints.isEmpty()){
-    		try {
-				d.readToBuffer();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    		return 0;
     	}
     	sleeptime=d.datapoints.getFirst().ts2-d.datapoints.getFirst().ts1;
     	num = (float) d.datapoints.poll().p1;

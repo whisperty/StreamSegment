@@ -20,6 +20,7 @@ public class InputBuffer {
 	boolean endStream;
 	
 	LinkedList<seg> datapoints;
+	LinkedList<Float> sourceStream;
 	swab divideDimen;
     /**
      * 1. 演示将流中的文本读入一个 StringBuffer 中
@@ -42,16 +43,16 @@ public class InputBuffer {
  //       System.out.println(buffer.length());
         String temp = buffer.toString();
         String[] temp1 = temp.split(" ");
-       
+        for(int i=0; i<temp1.length; i++)
+        {
+        	sourceStream.offer(Float.parseFloat(temp1[i]));
+        }
         buffer.setLength(0);
         divideDimen.seg_ts(temp1);
         for(int i=0; i<divideDimen.outputPoints.size(); i++){
         	datapoints.offer(divideDimen.outputPoints.poll());
         }
-/*        for(int i=0; i<temp1.length; i++)
-        {
-        	datapoints.offer(Float.parseFloat(temp1[i]));
-        }*/
+       
         if(line==null){
         	endStream=true;
         	is.close();
