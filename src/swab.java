@@ -97,7 +97,7 @@ public class swab{
 	}
 	
 	public void CONCAT(int k){
-		double max=baseline+errorbound;
+/*		double max=baseline+errorbound;
 		double min=baseline-errorbound;
 		if(k==0){
 			seg cursg=(seg) T.get(0);
@@ -158,16 +158,11 @@ public class swab{
 				minpoint=cur.p2;
 		}
 		int tspan=((seg)Seg_TS.get(size-1)).ts2-((seg)Seg_TS.get(0)).ts1;
-/*		boolean invert;
-		if(maxpoint-baseline>baseline-minpoint)
-			invert=false;
-		else
-			invert=true;*/
 		
 		Data newNode = new Data(ts, maxpoint, minpoint, tspan, maxpoint-minpoint);
 //		Cube.addnode(maxpoint, minpoint, tspan, maxpoint-minpoint, size, invert, timebase);
 		Vscube.vsModel.addNode(id, newNode);
-		Seg_TS.clear();
+		Seg_TS.clear();*/
 	}
 	
 	public int getDimension(){
