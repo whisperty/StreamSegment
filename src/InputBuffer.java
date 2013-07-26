@@ -27,6 +27,7 @@ public class InputBuffer {
      * @throws IOException
      */
 	public InputBuffer(){
+		sourceStream = new LinkedList<Float>();
 		datapoints = new LinkedList<seg>();
 		divideDimen = new swab();
 	}
@@ -105,8 +106,8 @@ public class InputBuffer {
         switch (sw) {
         case 1: // ≤‚ ‘∂¡
         {
-            //is = new FileInputStream("F:\\javaproject\\DimenDivide\\TBI_ECG.txt");
-            is = new FileInputStream("C:\\Users\\test\\Desktop\\TBI_ECG.txt");
+            is = new FileInputStream("F:\\javaproject\\DimenDivide\\TBI_ECG.txt");
+            //is = new FileInputStream("C:\\Users\\test\\Desktop\\TBI_ECG.txt");
             
             buffer = new StringBuffer();
             reader = new BufferedReader(new InputStreamReader(is));
