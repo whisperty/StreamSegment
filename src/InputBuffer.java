@@ -19,7 +19,7 @@ public class InputBuffer {
 	String line;
 	boolean endStream;
 	
-	LinkedList<seg> datapoints;
+	LinkedList<Double> datapoints;
 	LinkedList<Float> sourceStream;
 	swab divideDimen;
     /**
@@ -28,7 +28,7 @@ public class InputBuffer {
      */
 	public InputBuffer(){
 		sourceStream = new LinkedList<Float>();
-		datapoints = new LinkedList<seg>();
+		datapoints = new LinkedList<Double>();
 		divideDimen = new swab();
 	}
     public void readToBuffer()
@@ -51,8 +51,16 @@ public class InputBuffer {
         buffer.setLength(0);
         divideDimen.seg_ts(temp1);
         for(int i=0; i<divideDimen.outputPoints.size(); i++){
-        	datapoints.offer(divideDimen.outputPoints.poll());
+        	seg segTemp = divideDimen.outputPoints.poll();
+        	datapoints.offer(segTemp.p1);
+        	double slope = (segTemp.p2-segTemp.p1)/(segTemp.ts2-segTemp.ts1);
+        	for(int j=1; j<segTemp.ts2-segTemp.ts1; j++){
+        		double point = slope*j+segTemp.p1;
+        		datapoints.offer(point);
+        	}
+        	datapoints.offer(segTemp.p2);
         }
+        divideDimen.resetOutput();
        
         if(line==null){
         	endStream=true;

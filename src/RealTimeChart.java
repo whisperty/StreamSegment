@@ -48,6 +48,7 @@ public class RealTimeChart extends ChartPanel implements Runnable
         timeseriescollection.addSeries(baseline);
         timeseriescollection.addSeries(upBound);
         timeseriescollection.addSeries(downBound);
+        timeseriescollection.addSeries(sourceStream);
         JFreeChart jfreechart = ChartFactory.createTimeSeriesChart(title,"时间(秒)",yaxisName,timeseriescollection,true,true,false);  
         XYPlot xyplot = jfreechart.getXYPlot();  
         //纵坐标设定  
@@ -74,7 +75,7 @@ public class RealTimeChart extends ChartPanel implements Runnable
             upBound.add(new Millisecond(), 0.96);
             downBound.add(new Millisecond(), 0.92);
             sourceStream.add(new Millisecond(), getSource());
-            Thread.sleep(200*sleeptime);  
+            Thread.sleep(200);  
             //Thread.sleep(200);
         }  
         catch (InterruptedException e)  {   }  
@@ -95,23 +96,23 @@ public class RealTimeChart extends ChartPanel implements Runnable
 				}
     	}
     	num = d.sourceStream.poll();
+    	//System.out.println(num);
     	return num;
     }
       
-    private float randomNum()  
+    private double randomNum()  
     {     
         //System.out.println((Math.random()*20+80));        
         //return (long)(Math.random()*20+80); 
-    	float num;
+    	double num;
     	if(d.endStream)
     		return 0;
     	if(d.datapoints.isEmpty()){
     		return 0;
     	}
-    	sleeptime=d.datapoints.getFirst().ts2-d.datapoints.getFirst().ts1;
-    	num = (float) d.datapoints.poll().p1;
+    	num = d.datapoints.poll();
     	//num = d.datapoints.poll();
-    	System.out.println(num);
+    	//System.out.println(num);
     	return num;
     }  
 } 

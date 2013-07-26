@@ -8,7 +8,7 @@ import pku.cis.vscube.query.BasicVariation;
 public class Dimension {
 	static final double sameEps = 1e-8;
 	static final double trendEps = 1e-8;
-	List<Node> nodeList = new LinkedList();
+	List<Node> nodeList = new LinkedList<Node>();
 	
 	public void addNode(Data a){
 		if(nodeList.isEmpty()){

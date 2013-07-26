@@ -44,6 +44,11 @@ public class swab{
 		timebase=T.get(0).ts2+1;
 		long consumingTime = System.nanoTime() - startTime;
 	}
+	
+	public void resetOutput(){
+		outputPoints.clear();
+	}
+	
 	public void Bottom_up(String[] dataArray){
 		int i, k;
 		T.clear();
