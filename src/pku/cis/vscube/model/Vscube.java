@@ -12,12 +12,14 @@ public class Vscube{
 	public int DimNum = 5;
 	int expireTime;
 	
-	Vscube(){
+	public Vscube(){
 		initMvg();
+		//vsModel = new Vscube();
 		expireTime = 2000;
 	}
 	private void initMvg(){
 		int i;
+		mvg = new LinkedList<Dimension>();
 		for(i=0; i<DimNum; i++){
 			Dimension dim = new Dimension();
 			mvg.add(dim);

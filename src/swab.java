@@ -27,6 +27,7 @@ public class swab{
 //		intersg=new ArrayList<seg>();
 		outputPoints = new LinkedList<seg>();
 		T=new LinkedList<seg>();
+		intersg = new ArrayList<seg>();
 	}
 	public void seg_ts(String[] dataArray){
 		Seg_TS=new LinkedList<seg>();
@@ -35,7 +36,7 @@ public class swab{
 		long startTime = System.nanoTime();
 		Bottom_up(dataArray);
 		
-//		CONCAT(0);
+		CONCAT(0);
 		
 		//complete one phase
 		while (T.size()>1){
@@ -107,7 +108,9 @@ public class swab{
 		double max=baseline+errorbound;
 		double min=baseline-errorbound;
 		if(k==0){
-			seg cursg=(seg) T.get(0);
+			int i;
+			for(i=0; i<T.size()-1; i++){
+				seg cursg = T.poll();
 //			System.out.println(cursg.p1+" "+cursg.p2);
 			if((cursg.p1>max&&cursg.p2<min)||(cursg.p1<min&&cursg.p2>max)){
 				int baseTime = (int)((baseline-cursg.p1)*(cursg.ts2-cursg.ts1)/(cursg.p2-cursg.p1)+cursg.ts1);
@@ -141,6 +144,7 @@ public class swab{
 				}else
 					Seg_TS.add(cursg);
 			}
+			}
 		}else if(k==1){
 			int i;
 			int size=T.size();
@@ -150,6 +154,7 @@ public class swab{
 			return;
 	}
 	public void getVariation(){
+		System.out.println("getVariation");
 		int id=getDimension();
 		int i;
 		double maxpoint=((seg)Seg_TS.get(0)).p1;

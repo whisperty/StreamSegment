@@ -4,6 +4,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;  
 import javax.swing.JFrame;
 
+import pku.cis.vscube.model.Vscube;
 import pku.cis.vscube.query.ConstructQuery;
   
 public class Test  
@@ -14,6 +15,7 @@ public class Test
      */  
     public static void main(String[] args)  
     {  
+    Vscube.vsModel = new Vscube();
     JFrame frame=new JFrame("Test Chart");  
     RealTimeChart rtcp=new RealTimeChart("ECG data","随机数","数值"); 
     
