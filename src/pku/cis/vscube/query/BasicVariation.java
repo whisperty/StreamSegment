@@ -36,4 +36,42 @@ public class BasicVariation{
 	public String getVariName(){
 		return variName;
 	}
+	
+	private int min(int a, int b){
+		if(a < b)	
+			return a;
+		return b;
+	}
+	
+	private int max(int a, int b){
+		if(a > b)	
+			return a;
+		return b;
+	}
+	
+	public boolean isLegal(){
+		return bts <= ets;
+	}
+	
+	public BasicVariation VSCON(BasicVariation b){
+		BasicVariation ans = new BasicVariation(b);
+	
+		if(ets < b.bts || b.ets < bts)
+			ans.setTime(10, 0);
+		else
+			ans.setTime(max(bts, b.bts),  min(ets, b.ets));
+		return ans;
+	}
+	
+	public BasicVariation VSSEQ(BasicVariation b, double eps){
+		BasicVariation ans = new BasicVariation(b);
+	
+		if(Math.abs(ets - b.bts) < eps || Math.abs(bts - b.ets) < eps)
+			ans.setTime(min(bts, b.bts),  max(ets, b.ets));
+		else
+			ans.setTime(10, 0);
+		
+		return ans;
+	}
+	
 }

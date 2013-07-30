@@ -14,6 +14,7 @@ import pku.cis.vscube.model.Vscube;
 
 public class ConstructQuery{
 	LinkedList<LinkedList> queryResult;
+	final static double VSSEQEPS = 1e-8;
 	
 	public ConstructQuery(){
 		initResult();
@@ -58,22 +59,67 @@ public class ConstructQuery{
 	    }
 	}
 	
-	private void processQuery(Element root){
+	private LinkedList<BasicVariation>VSSEQ(LinkedList<BasicVariation> a, LinkedList<BasicVariation> b){
+		LinkedList<BasicVariation> ans = new LinkedList<BasicVariation>();
+		for(BasicVariation i: a)
+			for(BasicVariation j: b){
+				BasicVariation tmp = i.VSSEQ(j, VSSEQEPS);
+				if(tmp.isLegal())
+					ans.add(tmp);
+			}
+		
+		return ans;
+	}
+	
+	private LinkedList<BasicVariation>VSCON(LinkedList<BasicVariation> a, LinkedList<BasicVariation> b){
+		LinkedList<BasicVariation> ans = new LinkedList<BasicVariation>();
+		for(BasicVariation i: a)
+			for(BasicVariation j: b){
+				BasicVariation tmp = i.VSCON(j);
+				if(tmp.isLegal())
+					ans.add(tmp);				
+			}
+		
+		return ans;
+	}
+	
+	private LinkedList<BasicVariation> processQuery(Element root){
 		String name = root.getName();
+		LinkedList<BasicVariation> ans = new LinkedList<BasicVariation>();
+		
 		if(name == "bv"){
 			int dimIndex = getDimIndex(root.getAttributeValue("dimIndex"));
 			BasicVariation bv = new BasicVariation(dimIndex, root.getAttributeValue("variName"), Integer.parseInt(root.getAttributeValue("variType")));
 			LinkedList<BasicVariation> bvColl = Vscube.vsModel.getBv(bv);
+			ans = bvColl;//*****
 			int i;
 			for(i=0; i<bvColl.size(); i++){
 				(queryResult.get(dimIndex)).add(bvColl.get(i));
 			}
 		}else if(name == "VSSEQ"){
-			
+			List<Element>children = root.getChildren();
+			char f = 0;
+			for (Element el : children) {
+				LinkedList<BasicVariation> now = processQuery(el);
+				if(f == 0)	
+					ans = now;
+				else
+					ans = VSSEQ(ans, now); 
+			}
 		}else if(name == "VSCON"){
-			
+			List<Element>children = root.getChildren();
+			char f = 0;
+			for (Element el : children) {
+				LinkedList<BasicVariation> now = processQuery(el);
+				if(f == 0)	
+					ans = now;
+				else
+					ans = VSCON(ans, now); 
+			}			
 		}else
 			System.out.print("Wrong Operator");
+		
+		return ans;
 	}
 	
 	private int getDimIndex(String dim){
