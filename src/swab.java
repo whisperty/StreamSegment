@@ -7,7 +7,7 @@ import pku.cis.vscube.model.*;
 
 public class swab{
 	InputBuffer d;
-	public ArrayList<seg> Seg_TS, T;
+	public LinkedList<seg> Seg_TS, T;
 	int timebase;
 	double baseline=0.94, errorbound=0.02;
 	int index;
@@ -26,16 +26,16 @@ public class swab{
 		timebase=0;
 //		intersg=new ArrayList<seg>();
 		outputPoints = new LinkedList<seg>();
-		T=new ArrayList<seg>();
+		T=new LinkedList<seg>();
 	}
 	public void seg_ts(String[] dataArray){
-		Seg_TS=new ArrayList<seg>();
+		Seg_TS=new LinkedList<seg>();
 		
 		
 		long startTime = System.nanoTime();
 		Bottom_up(dataArray);
 		
-		CONCAT(0);
+//		CONCAT(0);
 		
 		//complete one phase
 		while (T.size()>1){
@@ -51,9 +51,11 @@ public class swab{
 	
 	public void Bottom_up(String[] dataArray){
 		int i, k;
-		T.clear();
 		int mergeSize=dataArray.length-1;
 //		System.out.println(stream.length);
+		if(T.size()!=0){
+			T.add(new seg(T.getLast().p2, T.getLast().ts2,Double.parseDouble(dataArray[0]), timebase));
+		}
 		for(i=0; i<mergeSize; i++){
 			seg segts=new seg();
 			segts.p1=Double.parseDouble(dataArray[i]);

@@ -34,7 +34,8 @@ public class InputBuffer {
     public void readToBuffer()
         throws IOException {
 //        String line = reader.readLine();       // 读取第一行
-        while (line != null) {          // 如果 line 为空说明读完了
+        
+    	while (line != null) {          // 如果 line 为空说明读完了
             buffer.append(line);        // 将读到的内容添加到 buffer 中
             buffer.append(" ");        // 添加换行符
 //            System.out.println(line);
@@ -60,7 +61,6 @@ public class InputBuffer {
         	}
         	datapoints.offer(segTemp.p2);
         }
-        divideDimen.resetOutput();
        
         if(line==null){
         	endStream=true;

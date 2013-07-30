@@ -15,4 +15,8 @@ public class seg{
 		this.p2=p2;
 		this.ts2=ts2;
 	}
+	public int getTime() {
+		// TODO Auto-generated method stub
+		return ts2;
+	}
 }

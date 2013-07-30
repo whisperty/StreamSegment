@@ -30,6 +30,12 @@ public class RealTimeChart extends ChartPanel implements Runnable
         d = new InputBuffer();
         try {
 			d.readData();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
