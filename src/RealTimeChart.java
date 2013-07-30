@@ -93,7 +93,7 @@ public class RealTimeChart extends ChartPanel implements Runnable
     	float num;
     	if(d.endStream)
     		return 0;
-    	if(d.sourceStream.isEmpty()){
+    	if(d.sourceStream.getFirst().getTime()>= d.pauseTime){
     			try {
 					d.readToBuffer();
 				} catch (IOException e) {
@@ -101,7 +101,7 @@ public class RealTimeChart extends ChartPanel implements Runnable
 					e.printStackTrace();
 				}
     	}
-    	num = d.sourceStream.poll();
+    	num = (float) d.sourceStream.poll().getValue();
     	//System.out.println(num);
     	return num;
     }

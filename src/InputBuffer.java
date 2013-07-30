@@ -20,16 +20,23 @@ public class InputBuffer {
 	boolean endStream;
 	
 	LinkedList<Double> datapoints;
-	LinkedList<Float> sourceStream;
+	LinkedList<DataItem> sourceStream;
 	swab divideDimen;
+	
+	//for syn
+	int pauseTime;
+	int timebase;
+	
     /**
      * 1. 演示将流中的文本读入一个 StringBuffer 中
      * @throws IOException
      */
 	public InputBuffer(){
-		sourceStream = new LinkedList<Float>();
+		sourceStream = new LinkedList<DataItem>();
 		datapoints = new LinkedList<Double>();
 		divideDimen = new swab();
+		pauseTime=10000;
+		timebase=0;
 	}
     public void readToBuffer()
         throws IOException {
@@ -47,19 +54,21 @@ public class InputBuffer {
         String[] temp1 = temp.split(" ");
         for(int i=0; i<temp1.length; i++)
         {
-        	sourceStream.offer(Float.parseFloat(temp1[i]));
+        	sourceStream.offer(new DataItem(Float.parseFloat(temp1[i]), timebase++));
         }
         buffer.setLength(0);
         divideDimen.seg_ts(temp1);
         for(int i=0; i<divideDimen.outputPoints.size(); i++){
         	seg segTemp = divideDimen.outputPoints.poll();
-        	datapoints.offer(segTemp.p1);
+        	if(segTemp.ts1 == 0)
+        		datapoints.offer(segTemp.p1);
         	double slope = (segTemp.p2-segTemp.p1)/(segTemp.ts2-segTemp.ts1);
         	for(int j=1; j<segTemp.ts2-segTemp.ts1; j++){
         		double point = slope*j+segTemp.p1;
         		datapoints.offer(point);
         	}
         	datapoints.offer(segTemp.p2);
+        	pauseTime = segTemp.ts2;
         }
        
         if(line==null){
