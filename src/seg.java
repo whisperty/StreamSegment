@@ -19,4 +19,16 @@ public class seg{
 		// TODO Auto-generated method stub
 		return ts2;
 	}
+	
+	public void print(){
+		System.out.println("("+ts1+","+p1+") ("+ts2+","+p2+")");
+	}
+	
+	public boolean isIn(double x){
+		return x >= ts1 && x <= ts2;
+	}
+	
+	public double calY(double x){
+		return p1 + (p2 - p1) * (x - ts1) / (ts2 - ts1);
+	}
 }

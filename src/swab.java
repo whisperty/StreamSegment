@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.lang.Math;
 import pku.cis.vscube.model.*;
+import java.util.Map;
 
 public class swab{
 	InputBuffer d;
@@ -19,6 +20,9 @@ public class swab{
 	static double MAXCOST = 0.035;
 	Queue<seg> outputPoints;
 	
+	LinkedList<Point>dict[] = new LinkedList[6];
+	double timeSpan[] = new double[6];
+	
 	public swab(){
 //		Cube=new vscube();
 		index=0;
@@ -28,6 +32,14 @@ public class swab{
 		outputPoints = new LinkedList<seg>();
 		T=new LinkedList<seg>();
 		intersg = new ArrayList<seg>();
+		
+		//采集点及时间跨度
+		//char[] diname={'P', 'Q', 'R', 'S', 'T', 'U'};
+		for(int i = 0; i < 6; i++){
+			dict[i] = new LinkedList<Point>();
+			timeSpan[i] = 1;
+		}
+		
 	}
 	public void seg_ts(String[] dataArray){
 		Seg_TS=new LinkedList<seg>();
@@ -181,7 +193,40 @@ public class swab{
 	//creat a dictionary which stores the info of all the dimensions
 	//then compare the segments with the dimension in the dic
 	public int getDimension(){
-		return 0;
+		for(seg s: Seg_TS)
+			s.print();
+
+		//	char[] diname={'P', 'Q', 'R', 'S', 'T', 'U'};
+		double [] diff = new double[6];
+		double sx = Seg_TS.getFirst().ts1;
+		double ts = Seg_TS.getLast().ts2 - sx;
+		
+		for(int i = 0; i < 6; i++){
+			diff[i] = Math.abs(ts - timeSpan[i]);
+			
+			for(Point p: dict[i]){
+				double x = 0, y = 0;
+				x = p.x/timeSpan[i] * ts + sx;
+				
+				for(seg s: Seg_TS)
+					if(s.isIn(x)){
+						y = s.calY(x);
+						break;
+					}
+				
+				diff[i] += Math.abs(y - p.y);
+			}
+		}
+		
+		int ans = 0;
+		double minDiff = diff[0];
+		for(int i = 1; i < 6; i++)
+			if(minDiff > diff[i]){
+				minDiff = diff[i];
+				ans = i;
+			}
+		
+		return ans;
 	}
 /*	public void TAKEOUT(){
 //		System.out.println("before"+d.buffer.length());
