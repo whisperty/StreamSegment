@@ -40,6 +40,57 @@ public class swab{
 			timeSpan[i] = 1;
 		}
 		
+		//P
+		dict[0].add(new Point(39 , 0.98));
+		dict[0].add(new Point(45 , 1));
+		dict[0].add(new Point(49 , 1.05));
+		dict[0].add(new Point(57 , 1));
+		dict[0].add(new Point(58 , 0.98));
+		
+		//Q
+		dict[1].add(new Point(58 , 0.98));
+		dict[1].add(new Point(73 , 0.95));
+		dict[1].add(new Point(77 , 0.91));
+		dict[1].add(new Point(79 , 0.96));
+		
+		//R
+		dict[2].add(new Point(79 , 0.96));
+		dict[2].add(new Point(83 , 1.12));
+		dict[2].add(new Point(85 , 1.09));
+		dict[2].add(new Point(87 , 0.95));
+		
+		//S
+		dict[3].add(new Point(87 , 0.95));
+		dict[3].add(new Point(89 , 0.76));
+		dict[3].add(new Point(91 , 0.7));
+		dict[3].add(new Point(100 , 0.95));
+		dict[3].add(new Point(113 , 0.98));
+		
+		//T
+		dict[4].add(new Point(113 , 0.98));
+		dict[4].add(new Point(134 , 1));
+		dict[4].add(new Point(141 , 1.07));
+		dict[4].add(new Point(148 , 1.07));
+		dict[4].add(new Point(158 , 0.99));
+		
+		//U
+		dict[5].add(new Point(158 , 0.99));
+		dict[5].add(new Point(170 , 0.93));
+		dict[5].add(new Point(178 , 0.94));
+		dict[5].add(new Point(183 , 0.94));
+		dict[5].add(new Point(187 , 0.97));
+		
+		for(int i = 0; i < 6; i++){
+			double sx = dict[i].getFirst().x;
+			timeSpan[i] = dict[i].getLast().x - sx;
+			
+			for(Point p: dict[i])
+				p.x -= sx;
+			
+			//for(Point p: dict[i])
+			//	System.out.println("[" + p.x + "," + p.y + "]");
+			//System.out.println("");
+		}
 	}
 	public void seg_ts(String[] dataArray){
 		Seg_TS=new LinkedList<seg>();
@@ -202,8 +253,7 @@ public class swab{
 		double ts = Seg_TS.getLast().ts2 - sx;
 		
 		for(int i = 0; i < 6; i++){
-			diff[i] = Math.abs(ts - timeSpan[i]);
-			
+			diff[i] = 0;
 			for(Point p: dict[i]){
 				double x = 0, y = 0;
 				x = p.x/timeSpan[i] * ts + sx;
@@ -216,6 +266,8 @@ public class swab{
 				
 				diff[i] += Math.abs(y - p.y);
 			}
+			
+			diff[i] = diff[i] / dict[i].size() +  Math.abs(ts - timeSpan[i]);
 		}
 		
 		int ans = 0;
