@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class swab{
 	InputBuffer d;
-	public LinkedList<seg> Seg_TS, T;
+	public LinkedList<seg> Seg_TS, T, intersg;
 	int timebase;
 	double baseline=0.94, errorbound=0.02;
 	int index;
-	char[] diname={'P', 'Q', 'R', 'S', 'T', 'U'};
-//	boolean valid;
-	ArrayList<seg> intersg;
+	char[] diname={'P', 'Q', 'R', 'S', 'T'};
+	int dimNum = 5;
+	double diffRatio = 0.8;
 	double bestpoint, bestts;
 	
 	static double MAXCOST = 0.035;
@@ -31,8 +31,8 @@ public class swab{
 //		intersg=new ArrayList<seg>();
 		outputPoints = new LinkedList<seg>();
 		T=new LinkedList<seg>();
-		intersg = new ArrayList<seg>();
-		
+		intersg = new LinkedList<seg>();
+		Seg_TS = new LinkedList<seg>();
 		//采集点及时间跨度
 		//char[] diname={'P', 'Q', 'R', 'S', 'T', 'U'};
 		for(int i = 0; i < 6; i++){
@@ -41,46 +41,69 @@ public class swab{
 		}
 		
 		//P
-		dict[0].add(new Point(39 , 0.98));
+/*		dict[0].add(new Point(39 , 0.98));
 		dict[0].add(new Point(45 , 1));
 		dict[0].add(new Point(49 , 1.05));
 		dict[0].add(new Point(57 , 1));
-		dict[0].add(new Point(58 , 0.98));
+		dict[0].add(new Point(58 , 0.98));*/
+		dict[0].add(new Point(17, 0.95));
+		dict[0].add(new Point(35, 0.95));
+		dict[0].add(new Point(49, 1.05));
+		dict[0].add(new Point(55, 1.02));
+		dict[0].add(new Point(60, 0.96));
 		
 		//Q
-		dict[1].add(new Point(58 , 0.98));
+/*		dict[1].add(new Point(58 , 0.98));
 		dict[1].add(new Point(73 , 0.95));
 		dict[1].add(new Point(77 , 0.91));
-		dict[1].add(new Point(79 , 0.96));
+		dict[1].add(new Point(79 , 0.96));*/
+		dict[1].add(new Point(60, 0.96));
+		dict[1].add(new Point(77, 0.91));
+		dict[1].add(new Point(79, 0.96));
 		
 		//R
-		dict[2].add(new Point(79 , 0.96));
+/*		dict[2].add(new Point(79 , 0.96));
 		dict[2].add(new Point(83 , 1.12));
 		dict[2].add(new Point(85 , 1.09));
-		dict[2].add(new Point(87 , 0.95));
+		dict[2].add(new Point(87 , 0.95));*/
+		dict[2].add(new Point(79, 0.96));
+		dict[2].add(new Point(83, 1.12));
+		dict[2].add(new Point(85, 1.09));
+		dict[2].add(new Point(87, 0.95));
 		
 		//S
-		dict[3].add(new Point(87 , 0.95));
+/*		dict[3].add(new Point(87 , 0.95));
 		dict[3].add(new Point(89 , 0.76));
 		dict[3].add(new Point(91 , 0.7));
 		dict[3].add(new Point(100 , 0.95));
-		dict[3].add(new Point(113 , 0.98));
+		dict[3].add(new Point(113 , 0.98));*/
+		dict[3].add(new Point(87, 0.95));
+		dict[3].add(new Point(89, 0.76));
+		dict[3].add(new Point(91, 0.7));
+		dict[3].add(new Point(98, 0.93));
 		
 		//T
-		dict[4].add(new Point(113 , 0.98));
+/*		dict[4].add(new Point(113 , 0.98));
 		dict[4].add(new Point(134 , 1));
 		dict[4].add(new Point(141 , 1.07));
 		dict[4].add(new Point(148 , 1.07));
-		dict[4].add(new Point(158 , 0.99));
+		dict[4].add(new Point(158 , 0.99));*/
+		dict[4].add(new Point(98, 0.93));
+		dict[4].add(new Point(100, 0.95));
+		dict[4].add(new Point(134, 0.99));
+		dict[4].add(new Point(143, 1.08));
+		dict[4].add(new Point(150, 1.07));
+		dict[4].add(new Point(162, 0.97));
+		dict[4].add(new Point(173, 0.93));
 		
 		//U
-		dict[5].add(new Point(158 , 0.99));
+/*		dict[5].add(new Point(158 , 0.99));
 		dict[5].add(new Point(170 , 0.93));
 		dict[5].add(new Point(178 , 0.94));
 		dict[5].add(new Point(183 , 0.94));
-		dict[5].add(new Point(187 , 0.97));
+		dict[5].add(new Point(187 , 0.97));*/
 		
-		for(int i = 0; i < 6; i++){
+		for(int i = 0; i < dimNum; i++){
 			double sx = dict[i].getFirst().x;
 			timeSpan[i] = dict[i].getLast().x - sx;
 			
@@ -93,19 +116,14 @@ public class swab{
 		}
 	}
 	public void seg_ts(String[] dataArray){
-		Seg_TS=new LinkedList<seg>();
-		
-		
 		long startTime = System.nanoTime();
 		Bottom_up(dataArray);
 		
 		CONCAT(0);
 		
-		//complete one phase
-		while (T.size()>1){
-			T.remove(0);
-		}
-		timebase=T.get(0).ts2+1;
+		while(T.size()>1)
+			T.removeFirst();
+		timebase=T.getLast().ts2+1;
 		long consumingTime = System.nanoTime() - startTime;
 	}
 	
@@ -127,12 +145,12 @@ public class swab{
 			segts.ts1=timebase+i;
 			segts.ts2=timebase+i+1;
 //			segts.valid=true;
-			if(i!=0)
-				T.get(T.size()-1).mergecost=mergeCost(T.get(T.size()-1), segts);
+			if(T.size()!=0)
+				T.getLast().mergecost=mergeCost(T.getLast(), segts);
 			T.add(segts);
 //			System.out.print(segts.p2+" ");
 		}
-		T.get(i-1).mergecost=MAXCOST;
+		T.getLast().mergecost=MAXCOST;
 //		System.out.print("\n");
 		while(((seg)T.get(minMerge())).mergecost<MAXCOST){
 			k=minMerge();
@@ -163,6 +181,7 @@ public class swab{
 		int i;
 		for(i=0; i<T.size()-1; i++){
 			outputPoints.offer((seg)T.get(i));
+//			T.get(i).print();
 		}
 		
 	}
@@ -173,41 +192,43 @@ public class swab{
 		if(k==0){
 			int i;
 			for(i=0; i<T.size()-1; i++){
-				seg cursg = T.poll();
+				seg cursg = T.get(i);
 //			System.out.println(cursg.p1+" "+cursg.p2);
-			if((cursg.p1>max&&cursg.p2<min)||(cursg.p1<min&&cursg.p2>max)){
-				int baseTime = (int)((baseline-cursg.p1)*(cursg.ts2-cursg.ts1)/(cursg.p2-cursg.p1)+cursg.ts1);
-				seg temp=new seg(cursg.p1, cursg.ts1, baseline, baseTime);
-				Seg_TS.add(temp);
-				getVariation();
-				seg temp1=new seg(baseline, baseTime, cursg.p2, cursg.ts2);
-				Seg_TS.add(temp1);
-			}else if((cursg.p1<min&&cursg.p2>=min)||(cursg.p1>max&&cursg.p2<=max)){
-//				valid=true;
-				bestpoint=cursg.p2;
-				bestts=cursg.ts2;
-				intersg.add(cursg);
-			}else if((cursg.p1>=min&&cursg.p2<min)||(cursg.p1<=max&&cursg.p2>max)) {
-				while(intersg.size()!=0 && intersg.get(0).ts1 != bestts){
-					Seg_TS.add(intersg.get(0));
-					intersg.remove(0);
-				}
-				getVariation();
-				while(intersg.size()!=0){
-					Seg_TS.add(intersg.get(0));
-					intersg.remove(0);
-				}
-			}else{
-				if(cursg.p1<=max&&cursg.p1>=min){
+				if((cursg.p1>max&&cursg.p2<min)||(cursg.p1<min&&cursg.p2>max)){
+					int baseTime = (int)((baseline-cursg.p1)*(cursg.ts2-cursg.ts1)/(cursg.p2-cursg.p1)+cursg.ts1);
+					seg temp=new seg(cursg.p1, cursg.ts1, baseline, baseTime);
+					Seg_TS.add(temp);
+					getVariation(Seg_TS);
+					seg temp1=new seg(baseline, baseTime, cursg.p2, cursg.ts2);
+					Seg_TS.add(temp1);
+				}else if((cursg.p1<min&&cursg.p2>=min)||(cursg.p1>max&&cursg.p2<=max)){
+//					valid=true;
+					bestpoint=cursg.p2;
+					bestts=cursg.ts2;
 					intersg.add(cursg);
-					if(Math.abs(cursg.p2-baseline)<Math.abs(bestpoint-baseline)){
-						bestpoint=cursg.p2;
-						bestts=cursg.ts2;
+				}else if((cursg.p1>=min&&cursg.p2<min)||(cursg.p1<=max&&cursg.p2>max)) {
+					while(intersg.size()!=0 && intersg.get(0).ts1 != bestts){
+						Seg_TS.add(intersg.get(0));
+						intersg.remove(0);
 					}
-				}else
+					getVariation(Seg_TS);
+					while(intersg.size()!=0){
+						Seg_TS.add(intersg.get(0));
+						intersg.remove(0);
+					}
 					Seg_TS.add(cursg);
+				}else{
+					if(cursg.p1<=max&&cursg.p1>=min){
+						intersg.add(cursg);
+						if(Math.abs(cursg.p2-baseline)<Math.abs(bestpoint-baseline)){
+							bestpoint=cursg.p2;
+							bestts=cursg.ts2;
+						}
+					}else
+						Seg_TS.add(cursg);
+				}
 			}
-			}
+			
 		}else if(k==1){
 			int i;
 			int size=T.size();
@@ -216,14 +237,24 @@ public class swab{
 		}else
 			return;
 	}
-	public void getVariation(){
+	
+	public void getVariation(LinkedList<seg> Seg_TS){
 		System.out.println("getVariation");
-		int id=getDimension();
+		int id=getDimension(Seg_TS);
+//		System.out.println(id);
 		int i;
 		double maxpoint=((seg)Seg_TS.get(0)).p1;
 		double minpoint=((seg)Seg_TS.get(0)).p1;
 		
 		int ts=((seg)Seg_TS.get(0)).ts1;
+		
+		//give up the first set of segments
+		if(ts == 0){
+			Seg_TS.clear();
+			return;
+		}
+			
+		
 		int size=Seg_TS.size();
 		for(i=0; i<size; i++){
 			seg cur=(seg) Seg_TS.get(i);
@@ -232,27 +263,28 @@ public class swab{
 			if(cur.p2<minpoint)
 				minpoint=cur.p2;
 		}
-		int tspan=((seg)Seg_TS.get(size-1)).ts2-((seg)Seg_TS.get(0)).ts1;
+		int tspan=((seg)Seg_TS.getLast()).ts2-((seg)Seg_TS.getFirst()).ts1;
 		
 		Data newNode = new Data(ts, maxpoint, minpoint, tspan, maxpoint-minpoint);
-//		Cube.addnode(maxpoint, minpoint, tspan, maxpoint-minpoint, size, invert, timebase);
+//		System.out.println("add to cube");
 		Vscube.vsModel.addNode(id, newNode);
 		Seg_TS.clear();
+//		System.out.println(Seg_TS.size());
 	}
 	
 	//the segments are stored in the variable seg_TS
 	//creat a dictionary which stores the info of all the dimensions
 	//then compare the segments with the dimension in the dic
-	public int getDimension(){
-		for(seg s: Seg_TS)
-			s.print();
+	public int getDimension(LinkedList<seg> Seg_TS){
+//		for(seg s: Seg_TS)
+//			s.print();
 
 		//	char[] diname={'P', 'Q', 'R', 'S', 'T', 'U'};
-		double [] diff = new double[6];
+		double [] diff = new double[dimNum];
 		double sx = Seg_TS.getFirst().ts1;
 		double ts = Seg_TS.getLast().ts2 - sx;
 		
-		for(int i = 0; i < 6; i++){
+		for(int i = 0; i < dimNum; i++){
 			diff[i] = 0;
 			for(Point p: dict[i]){
 				double x = 0, y = 0;
@@ -264,20 +296,23 @@ public class swab{
 						break;
 					}
 				
-				diff[i] += Math.abs(y - p.y);
+				diff[i] += Math.pow(y - p.y, 2);
 			}
 			
-			diff[i] = diff[i] / dict[i].size() +  Math.abs(ts - timeSpan[i]);
+			diff[i] = diffRatio * Math.pow(diff[i], 1/(double)2) + (1-diffRatio)* Math.abs(ts - timeSpan[i]);
 		}
 		
 		int ans = 0;
 		double minDiff = diff[0];
-		for(int i = 1; i < 6; i++)
+		for(int i = 1; i < dimNum; i++)
 			if(minDiff > diff[i]){
 				minDiff = diff[i];
 				ans = i;
 			}
-		
+		if(Seg_TS.getFirst().ts1 == 223){
+			for(int i =0; i< dimNum; i++)
+				System.out.println(diff[i]);
+		}
 		return ans;
 	}
 /*	public void TAKEOUT(){
