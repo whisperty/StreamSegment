@@ -77,9 +77,9 @@ public class RealTimeChart extends ChartPanel implements Runnable
         try  
         {  
             timeSeries.add(new Millisecond(), randomNum());
-            baseline.add(new Millisecond(), 0.94);
-            upBound.add(new Millisecond(), 0.96);
-            downBound.add(new Millisecond(), 0.92);
+            baseline.add(new Millisecond(), d.divideDimen.baseline);
+            upBound.add(new Millisecond(), d.divideDimen.baseline+d.divideDimen.errorbound);
+            downBound.add(new Millisecond(), d.divideDimen.baseline-d.divideDimen.errorbound);
             sourceStream.add(new Millisecond(), getSource());
             Thread.sleep(200);  
             //Thread.sleep(200);

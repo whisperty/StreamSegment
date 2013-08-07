@@ -10,11 +10,12 @@ public class swab{
 	InputBuffer d;
 	public LinkedList<seg> Seg_TS, T, intersg;
 	int timebase;
-	double baseline=0.94, errorbound=0.02;
+	double baseline=0.95, errorbound=0.022;
 	int index;
 	char[] diname={'P', 'Q', 'R', 'S', 'T'};
 	int dimNum = 5;
-	double diffRatio = 0.8;
+	int curdimIndex = 0;
+	double diffRatio = 0.99;
 	double bestpoint, bestts;
 	
 	static double MAXCOST = 0.035;
@@ -81,6 +82,7 @@ public class swab{
 		dict[3].add(new Point(89, 0.76));
 		dict[3].add(new Point(91, 0.7));
 		dict[3].add(new Point(98, 0.93));
+		dict[3].add(new Point(100, 0.95));
 		
 		//T
 /*		dict[4].add(new Point(113 , 0.98));
@@ -88,13 +90,14 @@ public class swab{
 		dict[4].add(new Point(141 , 1.07));
 		dict[4].add(new Point(148 , 1.07));
 		dict[4].add(new Point(158 , 0.99));*/
-		dict[4].add(new Point(98, 0.93));
+//		dict[4].add(new Point(98, 0.93));
 		dict[4].add(new Point(100, 0.95));
 		dict[4].add(new Point(134, 0.99));
 		dict[4].add(new Point(143, 1.08));
 		dict[4].add(new Point(150, 1.07));
 		dict[4].add(new Point(162, 0.97));
 		dict[4].add(new Point(173, 0.93));
+		dict[4].add(new Point(186, 0.95));
 		
 		//U
 /*		dict[5].add(new Point(158 , 0.99));
@@ -107,9 +110,15 @@ public class swab{
 			double sx = dict[i].getFirst().x;
 			timeSpan[i] = dict[i].getLast().x - sx;
 			
-			for(Point p: dict[i])
+			double minValue = dict[i].getFirst().y;
+			for(Point p: dict[i]){
+				if(p.y < minValue)
+					minValue = p.y;
 				p.x -= sx;
-			
+			}
+			for(Point p: dict[i]){
+				p.y -= minValue;
+			}
 			//for(Point p: dict[i])
 			//	System.out.println("[" + p.x + "," + p.y + "]");
 			//System.out.println("");
@@ -239,9 +248,9 @@ public class swab{
 	}
 	
 	public void getVariation(LinkedList<seg> Seg_TS){
-		System.out.println("getVariation");
+//		System.out.println("getVariation");
 		int id=getDimension(Seg_TS);
-//		System.out.println(id);
+		System.out.println(id);
 		int i;
 		double maxpoint=((seg)Seg_TS.get(0)).p1;
 		double minpoint=((seg)Seg_TS.get(0)).p1;
@@ -283,7 +292,11 @@ public class swab{
 		double [] diff = new double[dimNum];
 		double sx = Seg_TS.getFirst().ts1;
 		double ts = Seg_TS.getLast().ts2 - sx;
-		
+		double minValue = Seg_TS.getFirst().p1;
+		for(seg s: Seg_TS){
+			if(s.p2 < minValue)
+				minValue = s.p2;
+		}
 		for(int i = 0; i < dimNum; i++){
 			diff[i] = 0;
 			for(Point p: dict[i]){
@@ -292,14 +305,18 @@ public class swab{
 				
 				for(seg s: Seg_TS)
 					if(s.isIn(x)){
-						y = s.calY(x);
+						y = s.calY(x) - minValue;
 						break;
 					}
 				
-				diff[i] += Math.pow(y - p.y, 2);
+				diff[i] += Math.abs(y - p.y);
 			}
 			
-			diff[i] = diffRatio * Math.pow(diff[i], 1/(double)2) + (1-diffRatio)* Math.abs(ts - timeSpan[i]);
+			//diff[i] = diffRatio * Math.pow(diff[i], 1/(double)2) + (1-diffRatio)* Math.abs(ts - timeSpan[i]);
+			
+			diff[i] = diffRatio * diff[i]/dict[i].size();
+			if((curdimIndex+1)%5  == i)
+				diff[i] *= 0.5;
 		}
 		
 		int ans = 0;
@@ -309,10 +326,11 @@ public class swab{
 				minDiff = diff[i];
 				ans = i;
 			}
-		if(Seg_TS.getFirst().ts1 == 223){
+		curdimIndex = ans;
+/*		if(Seg_TS.getFirst().ts1 == 223){
 			for(int i =0; i< dimNum; i++)
 				System.out.println(diff[i]);
-		}
+		}*/
 		return ans;
 	}
 /*	public void TAKEOUT(){
